@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+html, body, #root {
+  height: 100%; width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #07080f; color: #fff;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 99px; }
+
+input, button { font-family: inherit; }
+button { cursor: pointer; border: none; background: none; }
+input { outline: none; border: none; background: none; }
+
+/* ── Animations ── */
+@keyframes fadeUp  { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scaleIn { from { opacity: 0; transform: scale(0.96); }      to { opacity: 1; transform: scale(1); } }
+@keyframes shimmer { 0% { background-position: -600px 0; } 100% { background-position: 600px 0; } }
+@keyframes pulse   { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+.fade-up  { animation: fadeUp  0.4s cubic-bezier(.22,1,.36,1) both; }
+.scale-in { animation: scaleIn 0.3s cubic-bezier(.22,1,.36,1) both; }
+
+/* ── Utilities ── */
+.glass {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+}
+
+.hover-row { transition: background 0.15s ease; }
+.hover-row:hover { background: rgba(255,255,255,0.04) !important; }
+
+/* ── Buttons ── */
+.btn-primary {
+  background: linear-gradient(135deg, #059669, #10b981);
+  color: white; font-weight: 600; border-radius: 12px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn-primary:hover  { opacity: 0.88; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.35; pointer-events: none; }
+
+.btn-ghost {
+  background: rgba(255,255,255,0.05); color: #9ca3af; font-weight: 500;
+  border-radius: 12px; border: 1px solid rgba(255,255,255,0.07);
+  transition: background 0.15s, color 0.15s;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.09); color: #fff; }
+
+/* ── Sidebar nav ── */
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px; border-radius: 12px;
+  font-size: 14px; font-weight: 500; color: #6b7280;
+  cursor: pointer; transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+.nav-item:hover  { background: rgba(255,255,255,0.05); color: #d1d5db; }
+.nav-item.active {
+  background: rgba(16,185,129,0.12);
+  color: #6ee7b7;
+  border-color: rgba(16,185,129,0.18);
+}
+
+/* ── Chips ── */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; white-space: nowrap;
+}
+.chip-green  { background: rgba(16,185,129,0.12);  color: #34d399; }
+.chip-red    { background: rgba(239,68,68,0.12);   color: #f87171; }
+.chip-blue   { background: rgba(16,185,129,0.1);   color: #6ee7b7; }
+.chip-yellow { background: rgba(251,191,36,0.12);  color: #fcd34d; }
+
+/* ── Mobile bottom nav ── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(10,12,18,0.96);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 0 max(10px, env(safe-area-inset-bottom));
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .sidebar       { display: none !important; }
+  .bottom-nav    { display: flex; }
+  .main-padded   { padding-bottom: 80px !important; }
+  .desktop-only  { display: none !important; }
+}
+@media (min-width: 769px) {
+  .mobile-only   { display: none !important; }
+}
