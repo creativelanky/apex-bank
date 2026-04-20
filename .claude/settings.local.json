@@ -8,7 +8,11 @@
       "Bash(cp -r \"/Users/triumph/Documents/Online banking/tmp/banking-app/.\" \"/Users/triumph/Documents/Online banking/\")",
       "Bash(rm -rf \"/Users/triumph/Documents/Online banking/tmp\")",
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(gh repo *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

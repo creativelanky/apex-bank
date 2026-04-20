@@ -4,9 +4,10 @@ import { transactions as init, user as initUser } from '../data/mockData';
 const Ctx = createContext(null);
 
 export function AppProvider({ children }) {
-  const [balance, setBalance] = useState(initUser.balance);
+  const [balance, setBalance]   = useState(initUser.balance);
   const [transactions, setTransactions] = useState(init);
-  const [hideBalance, setHideBalance] = useState(false);
+  const [hideBalance, setHideBalance]   = useState(false);
+  const [theme, setTheme]       = useState('dark'); // 'dark' | 'light'
 
   function send(contact, amount, note) {
     setBalance(b => b - amount);
@@ -24,7 +25,13 @@ export function AppProvider({ children }) {
   }
 
   return (
-    <Ctx.Provider value={{ balance, transactions, hideBalance, toggleHide: () => setHideBalance(v => !v), send }}>
+    <Ctx.Provider value={{
+      balance, transactions, hideBalance,
+      toggleHide: () => setHideBalance(v => !v),
+      send,
+      theme,
+      toggleTheme: () => setTheme(t => t === 'dark' ? 'light' : 'dark'),
+    }}>
       {children}
     </Ctx.Provider>
   );

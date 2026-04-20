@@ -1,9 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Building2, Zap, ArrowRight, Check, Clock, ChevronDown,
-  RotateCcw, Delete, Info, ShieldCheck, AlertCircle
+  RotateCcw, Delete, Info, ShieldCheck, AlertCircle, Smartphone, RefreshCw
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+
+// Generate a random 6-digit OTP for demo purposes
+function generateOtp() { return String(Math.floor(100000 + Math.random() * 900000)); }
 
 const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
@@ -33,7 +36,7 @@ const TRANSFER_TYPES = [
   },
 ];
 
-const STEPS = ['Type', 'Bank Details', 'Review', 'PIN', 'Done'];
+const STEPS = ['Type', 'Bank Details', 'Review', 'OTP', 'Done'];
 
 export default function Send({ onNav }) {
   const { send, balance } = useApp();
@@ -48,8 +51,10 @@ export default function Send({ onNav }) {
   const [acctType, setAcctType]   = useState('checking');
   const [amount, setAmount]       = useState('');
   const [memo, setMemo]           = useState('');
-  const [pin, setPin]             = useState('');
-  const [pinError, setPinError]   = useState(false);
+  const [otp, setOtp]             = useState('');
+  const [otpError, setOtpError]   = useState(false);
+  const [otpCode, setOtpCode]     = useState('');
+  const [countdown, setCountdown] = useState(0);
   const [txId]                    = useState(() => 'APX' + Math.random().toString(36).slice(2, 10).toUpperCase());
   const bankRef = useRef(null);
 
@@ -65,16 +70,35 @@ export default function Send({ onNav }) {
     return false;
   }
 
-  function handlePinKey(k) {
-    if (k === 'del') { setPin(p => p.slice(0, -1)); setPinError(false); return; }
-    if (pin.length >= 6) return;
-    const next = pin + k;
-    setPin(next);
+  function sendOtp() {
+    const code = generateOtp();
+    setOtpCode(code);
+    setOtp('');
+    setOtpError(false);
+    setCountdown(30);
+  }
+
+  // countdown timer
+  useEffect(() => {
+    if (countdown <= 0) return;
+    const t = setTimeout(() => setCountdown(c => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [countdown]);
+
+  function handleOtpKey(k) {
+    if (k === 'del') { setOtp(p => p.slice(0, -1)); setOtpError(false); return; }
+    if (otp.length >= 6) return;
+    const next = otp + k;
+    setOtp(next);
     if (next.length === 6) {
-      // Accept any 6-digit PIN for demo
       setTimeout(() => {
-        send({ name: holderName, avatar: holderName.slice(0, 2).toUpperCase() }, num, memo || `${type === 'ach' ? 'ACH' : 'Wire'} to ${bankName}`);
-        setStep(4);
+        if (next === otpCode) {
+          send({ name: holderName, avatar: holderName.slice(0, 2).toUpperCase() }, num, memo || `${type === 'ach' ? 'ACH' : 'Wire'} to ${bankName}`);
+          setStep(4);
+        } else {
+          setOtpError(true);
+          setOtp('');
+        }
       }, 300);
     }
   }
@@ -343,62 +367,97 @@ export default function Send({ onNav }) {
 
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn-ghost" style={{ padding: '13px 20px', fontSize: 14 }} onClick={() => setStep(1)}>Edit</button>
-            <button className="btn-primary" onClick={() => setStep(3)}
+            <button className="btn-primary" onClick={() => { sendOtp(); setStep(3); }}
               style={{ flex: 1, padding: '13px', fontSize: 15, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-              <ShieldCheck size={16} /> Confirm with PIN
+              <ShieldCheck size={16} /> Confirm with OTP
             </button>
           </div>
         </div>
       )}
 
-      {/* ── STEP 3: PIN ── */}
+      {/* ── STEP 3: OTP ── */}
       {step === 3 && (
         <div className="scale-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <div style={{ width: 60, height: 60, borderRadius: 18, background: 'linear-gradient(135deg, #065f46, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
-            <ShieldCheck size={28} color="#fff" />
+          {/* Icon */}
+          <div style={{ width: 64, height: 64, borderRadius: 20, background: 'linear-gradient(135deg, #065f46, #10b981)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20, boxShadow: '0 0 0 12px rgba(16,185,129,0.08)' }}>
+            <Smartphone size={28} color="#fff" />
           </div>
-          <p style={{ fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 6 }}>Enter your PIN</p>
-          <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 32, textAlign: 'center' }}>
-            Enter your 6-digit security PIN to authorize<br />the transfer of <strong style={{ color: '#fff' }}>{fmt(total)}</strong>
+
+          <p style={{ fontSize: 21, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Verify with OTP</p>
+          <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 6, textAlign: 'center', lineHeight: 1.6 }}>
+            A 6-digit code was sent to your registered<br />phone number ending in <strong style={{ color: '#9ca3af' }}>•••• 7823</strong>
           </p>
 
-          {/* PIN dots */}
-          <div style={{ display: 'flex', gap: 14, marginBottom: pinError ? 8 : 32 }}>
+          {/* Demo hint */}
+          <div style={{ marginBottom: 28, padding: '8px 16px', borderRadius: 10, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
+            <p style={{ fontSize: 12, color: '#34d399', textAlign: 'center' }}>
+              Demo code: <strong style={{ fontFamily: 'monospace', letterSpacing: '0.15em' }}>{otpCode}</strong>
+            </p>
+          </div>
+
+          {/* OTP dots */}
+          <div style={{ display: 'flex', gap: 12, marginBottom: otpError ? 10 : 32 }}>
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} style={{
-                width: 16, height: 16, borderRadius: '50%',
-                background: i < pin.length ? '#10b981' : 'rgba(255,255,255,0.1)',
-                border: i < pin.length ? '2px solid #10b981' : '2px solid rgba(255,255,255,0.12)',
-                transform: i < pin.length ? 'scale(1.2)' : 'scale(1)',
+                width: 14, height: 14, borderRadius: '50%',
+                background: i < otp.length ? '#10b981' : 'rgba(255,255,255,0.08)',
+                border: i < otp.length ? '2px solid #10b981' : '2px solid rgba(255,255,255,0.1)',
+                transform: i < otp.length ? 'scale(1.25)' : 'scale(1)',
                 transition: 'all 0.15s ease',
-                boxShadow: i < pin.length ? '0 0 8px rgba(16,185,129,0.5)' : 'none',
+                boxShadow: i < otp.length ? '0 0 8px rgba(16,185,129,0.55)' : 'none',
               }} />
             ))}
           </div>
-          {pinError && <p style={{ fontSize: 12, color: '#f87171', marginBottom: 20 }}>Incorrect PIN. Try again.</p>}
+
+          {otpError && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
+              <AlertCircle size={13} color="#f87171" />
+              <p style={{ fontSize: 12, color: '#f87171' }}>Incorrect code. Please try again.</p>
+            </div>
+          )}
 
           {/* Keypad */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, width: '100%', maxWidth: 280, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, width: '100%', maxWidth: 290, marginBottom: 20 }}>
             {['1','2','3','4','5','6','7','8','9','','0','del'].map((k, idx) => (
               k === '' ? <div key={idx} /> : (
-                <button key={k} onClick={() => handlePinKey(k)}
+                <button key={k} onClick={() => handleOtpKey(k)}
                   style={{
-                    height: 60, borderRadius: 16, fontSize: k === 'del' ? 13 : 22, fontWeight: k === 'del' ? 500 : 600,
-                    color: k === 'del' ? '#9ca3af' : '#fff',
-                    background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.07)',
+                    height: 62, borderRadius: 16,
+                    fontSize: k === 'del' ? 14 : 22, fontWeight: k === 'del' ? 500 : 600,
+                    color: k === 'del' ? '#6b7280' : '#fff',
+                    background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)',
                     cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     transition: 'background 0.1s ease',
                   }}
-                  onMouseDown={e => e.currentTarget.style.background = 'rgba(16,185,129,0.15)'}
-                  onMouseUp={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+                  onMouseDown={e => e.currentTarget.style.background = 'rgba(16,185,129,0.14)'}
+                  onMouseUp={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}
                 >
-                  {k === 'del' ? <Delete size={16} /> : k}
+                  {k === 'del' ? <Delete size={17} /> : k}
                 </button>
               )
             ))}
           </div>
-          <button className="btn-ghost" style={{ padding: '10px 20px', fontSize: 13 }} onClick={() => { setStep(2); setPin(''); }}>Cancel</button>
+
+          {/* Resend */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+            {countdown > 0 ? (
+              <p style={{ fontSize: 13, color: '#4b5563' }}>
+                Resend code in <strong style={{ color: '#6b7280' }}>{countdown}s</strong>
+              </p>
+            ) : (
+              <button
+                onClick={() => { sendOtp(); }}
+                style={{ fontSize: 13, color: '#34d399', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+              >
+                <RefreshCw size={13} /> Resend OTP
+              </button>
+            )}
+          </div>
+
+          <button className="btn-ghost" style={{ padding: '10px 24px', fontSize: 13 }} onClick={() => { setStep(2); setOtp(''); setOtpError(false); }}>
+            Cancel
+          </button>
         </div>
       )}
     </div>

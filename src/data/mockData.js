@@ -5,9 +5,16 @@ export const user = {
   plan: 'Premium',
   balance: 48_294.52,
   savingsBalance: 12_800.00,
-  accountNumber: '•••• 8834',
+  accountNumber: '20251069',
   routing: '021000021',
   tag: '$alexrivera',
+  currencies: [
+    { code: 'USD', symbol: '$',  balance: 48_294.52, flag: '🇺🇸' },
+    { code: 'EUR', symbol: '€',  balance: 12_430.00, flag: '🇪🇺' },
+    { code: 'CAD', symbol: 'C$', balance: 5_200.00,  flag: '🇨🇦' },
+    { code: 'GBP', symbol: '£',  balance: 8_950.75,  flag: '🇬🇧' },
+    { code: 'AUD', symbol: 'A$', balance: 3_100.00,  flag: '🇦🇺' },
+  ],
 };
 
 export const transactions = [
