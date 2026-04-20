@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Search, ArrowDownLeft, ArrowUpRight } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
-const fmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2 });
-const fmtD = s => new Date(s).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const fmtAmt = n => n.toLocaleString('en-US', { minimumFractionDigits: 2 });
+const fmtD   = s => new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 const FILTERS = ['All', 'Credits', 'Debits'];
+
+const STATUS = ['completed','completed','pending','completed'];
 
 export default function Transactions() {
   const { transactions } = useApp();
@@ -22,101 +24,119 @@ export default function Transactions() {
   const net      = totalIn - totalOut;
 
   return (
-    <div style={{ padding: 'clamp(20px,4vw,36px)', maxWidth: 900, margin: '0 auto' }} className="fade-up">
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 'clamp(18px,3vw,24px)', fontWeight: 700, color: '#fff', letterSpacing: '-0.4px', marginBottom: 3 }}>Transactions</h1>
-        <p style={{ fontSize: 13, color: '#6b7280' }}>{list.length} transactions</p>
+    <div style={{ minHeight: '100%', background: 'var(--page-bg)' }} className="fade-up">
+      {/* Page header */}
+      <div style={{ background: 'var(--page-header-bg)', borderBottom: '1px solid var(--page-header-border)', padding: '18px clamp(16px,3vw,32px)' }}>
+        <h1 style={{ fontSize: 18, fontWeight: 700, color: 'var(--page-header-text)', marginBottom: 2 }}>Transactions</h1>
+        <p style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{list.length} records</p>
       </div>
 
-      {/* Summary */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
-        <SummaryCard label="Total In"  value={totalIn}  color="#34d399" prefix="+" />
-        <SummaryCard label="Total Out" value={totalOut} color="#f87171" prefix="-" />
-        <SummaryCard label="Net"       value={Math.abs(net)} color={net >= 0 ? '#34d399' : '#f87171'} prefix={net >= 0 ? '+' : '-'} />
-      </div>
-
-      {/* Search + filter */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 18, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 200, display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-          <Search size={15} color="#4b5563" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, fontSize: 13, color: '#e5e7eb', background: 'transparent' }} />
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {FILTERS.map(f => (
-            <button key={f} onClick={() => setFilter(f)} style={{
-              padding: '10px 14px', borderRadius: 12, fontSize: 13, fontWeight: 500, cursor: 'pointer', border: 'none',
-              background: filter === f ? 'rgba(16,185,129,0.15)' : 'rgba(255,255,255,0.04)',
-              color: filter === f ? '#34d399' : '#6b7280',
-              outline: filter === f ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(255,255,255,0.06)',
-            }}>{f}</button>
+      <div style={{ padding: 'clamp(16px,3vw,28px)' }}>
+        {/* Summary cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 20 }}>
+          {[
+            { label: 'Total In',  value: `+$${fmtAmt(totalIn)}`,        color: '#059669', accent: '#dcfce7' },
+            { label: 'Total Out', value: `-$${fmtAmt(totalOut)}`,       color: '#dc2626', accent: '#fee2e2' },
+            { label: 'Net',       value: `${net>=0?'+':'-'}$${fmtAmt(Math.abs(net))}`, color: net>=0?'#059669':'#dc2626', accent: net>=0?'#dcfce7':'#fee2e2' },
+          ].map(c => (
+            <div key={c.label} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: 'clamp(12px,2vw,18px)', boxShadow: 'var(--shadow)' }}>
+              <p style={{ fontSize: 11.5, color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{c.label}</p>
+              <p style={{ fontSize: 'clamp(16px,2.5vw,22px)', fontWeight: 700, color: c.color }}>{c.value}</p>
+            </div>
           ))}
         </div>
-      </div>
 
-      {/* Desktop table */}
-      <div className="glass desktop-only" style={{ borderRadius: 20, overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              {['Transaction', 'Category', 'Date', 'Amount'].map(h => (
-                <th key={h} style={{ padding: '11px 22px', textAlign: h === 'Amount' ? 'right' : 'left', fontSize: 11, fontWeight: 600, color: '#2d3748', letterSpacing: '0.06em', textTransform: 'uppercase' }}>{h}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {list.length === 0
-              ? <tr><td colSpan={4} style={{ padding: '48px', textAlign: 'center', color: '#4b5563', fontSize: 14 }}>No transactions found</td></tr>
-              : list.map((t, i) => (
-                <tr key={t.id} className="hover-row" style={{ borderBottom: i < list.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none' }}>
-                  <td style={{ padding: '13px 22px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{t.icon}</div>
-                      <p style={{ fontSize: 13, fontWeight: 500, color: '#e5e7eb' }}>{t.name}</p>
-                    </div>
-                  </td>
-                  <td style={{ padding: '13px 22px' }}><span className="chip chip-blue">{t.category}</span></td>
-                  <td style={{ padding: '13px 22px', fontSize: 13, color: '#6b7280' }}>{fmtD(t.date)}</td>
-                  <td style={{ padding: '13px 22px', textAlign: 'right' }}>
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 5 }}>
-                      {t.type === 'credit' ? <ArrowDownLeft size={13} color="#34d399" /> : <ArrowUpRight size={13} color="#9ca3af" />}
-                      <span style={{ fontSize: 14, fontWeight: 600, color: t.type === 'credit' ? '#34d399' : '#fff' }}>${fmt(t.amount)}</span>
-                    </div>
-                  </td>
+        {/* Search + filter */}
+        <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 180, display: 'flex', alignItems: 'center', gap: 10, padding: '9px 14px', borderRadius: 8, background: 'var(--input-bg)', border: '1px solid var(--input-border)' }}>
+            <Search size={14} color="var(--text-3)" />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search transactions…"
+              style={{ flex: 1, fontSize: 13, color: 'var(--input-text)', background: 'transparent' }} />
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {FILTERS.map(f => (
+              <button key={f} onClick={() => setFilter(f)} style={{
+                padding: '9px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500, cursor: 'pointer',
+                background: filter===f ? 'var(--accent-bg)' : 'var(--input-bg)',
+                color: filter===f ? 'var(--accent)' : 'var(--text-2)',
+                border: filter===f ? '1px solid var(--accent-border)' : '1px solid var(--input-border)',
+              }}>{f}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Table */}
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', boxShadow: 'var(--shadow)' }}>
+          {/* Desktop */}
+          <div className="desktop-only" style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 700 }}>
+              <thead>
+                <tr style={{ background: 'var(--input-bg)', borderBottom: '1px solid var(--border)' }}>
+                  {['Date','Description','Currency','Amount','Charge','Grand Total','DR/CR','Type','Status'].map(h => (
+                    <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.05em', whiteSpace: 'nowrap' }}>{h}</th>
+                  ))}
                 </tr>
+              </thead>
+              <tbody>
+                {list.length === 0 ? (
+                  <tr><td colSpan={9} style={{ padding: '48px', textAlign: 'center', color: 'var(--text-3)', fontSize: 14 }}>No transactions found</td></tr>
+                ) : list.map((t, i) => {
+                  const charge = t.type==='debit' ? (t.amount*0.005).toFixed(2) : '0.00';
+                  const grand  = (t.amount + parseFloat(charge)).toFixed(2);
+                  const status = STATUS[i % STATUS.length];
+                  const chip   = status==='completed'
+                    ? { bg:'var(--chip-green-bg)', color:'var(--chip-green-text)', label:'Completed' }
+                    : { bg:'var(--chip-yellow-bg)', color:'var(--chip-yellow-text)', label:'Pending' };
+                  return (
+                    <tr key={t.id} className="hover-row" style={{ borderBottom: i<list.length-1 ? '1px solid var(--divider)' : 'none' }}>
+                      <td style={{ padding:'12px 16px', fontSize:13, color:'var(--text-2)', whiteSpace:'nowrap' }}>{fmtD(t.date)}</td>
+                      <td style={{ padding:'12px 16px' }}>
+                        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+                          <div style={{ width:32, height:32, borderRadius:8, background:'var(--accent-bg)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'var(--accent)', flexShrink:0 }}>{t.avatar}</div>
+                          <span style={{ fontSize:13, fontWeight:500, color:'var(--text-1)', whiteSpace:'nowrap' }}>{t.name}</span>
+                        </div>
+                      </td>
+                      <td style={{ padding:'12px 16px', fontSize:13, fontWeight:600, color:'var(--text-1)' }}>USD</td>
+                      <td style={{ padding:'12px 16px', fontSize:13, fontWeight:600, color:'var(--text-1)' }}>${fmtAmt(t.amount)}</td>
+                      <td style={{ padding:'12px 16px', fontSize:13, color:'var(--text-2)' }}>${charge}</td>
+                      <td style={{ padding:'12px 16px', fontSize:13, fontWeight:600, color:'var(--text-1)' }}>${grand}</td>
+                      <td style={{ padding:'12px 16px' }}>
+                        <span style={{ fontSize:12, fontWeight:700, color: t.type==='credit'?'#059669':'#dc2626' }}>{t.type==='credit'?'CR':'DR'}</span>
+                      </td>
+                      <td style={{ padding:'12px 16px' }}><span className="chip chip-blue">{t.category}</span></td>
+                      <td style={{ padding:'12px 16px' }}>
+                        <span style={{ fontSize:11, fontWeight:600, padding:'3px 9px', borderRadius:99, background:chip.bg, color:chip.color }}>{chip.label}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Mobile */}
+          <div className="mobile-only">
+            {list.length === 0
+              ? <p style={{ padding:'40px', textAlign:'center', color:'var(--text-3)', fontSize:14 }}>No transactions found</p>
+              : list.map((t, i) => (
+                <div key={t.id} className="hover-row" style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', borderBottom: i<list.length-1?'1px solid var(--divider)':'none' }}>
+                  <div style={{ width:40, height:40, borderRadius:10, background:'var(--accent-bg)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:11, fontWeight:700, color:'var(--accent)', flexShrink:0 }}>{t.avatar}</div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <p style={{ fontSize:13, fontWeight:500, color:'var(--text-1)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{t.name}</p>
+                    <p style={{ fontSize:11, color:'var(--text-3)' }}>{fmtD(t.date)} · {t.category}</p>
+                  </div>
+                  <div style={{ textAlign:'right', flexShrink:0 }}>
+                    <span style={{ fontSize:13, fontWeight:700, color:t.type==='credit'?'#059669':'var(--text-1)' }}>
+                      {t.type==='credit'?'+':'-'}${fmtAmt(t.amount)}
+                    </span>
+                    <p style={{ fontSize:11, color:t.type==='credit'?'#059669':'#dc2626', fontWeight:600 }}>{t.type==='credit'?'CR':'DR'}</p>
+                  </div>
+                </div>
               ))
             }
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
-
-      {/* Mobile cards */}
-      <div className="mobile-only glass" style={{ borderRadius: 20, overflow: 'hidden' }}>
-        {list.length === 0
-          ? <p style={{ padding: '40px', textAlign: 'center', color: '#4b5563', fontSize: 14 }}>No transactions found</p>
-          : list.map((t, i) => (
-            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderBottom: i < list.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-              <div style={{ width: 40, height: 40, borderRadius: 12, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, flexShrink: 0 }}>{t.icon}</div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontSize: 13, fontWeight: 500, color: '#e5e7eb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</p>
-                <p style={{ fontSize: 11, color: '#4b5563' }}>{new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} · {t.category}</p>
-              </div>
-              <span style={{ fontSize: 14, fontWeight: 600, color: t.type === 'credit' ? '#34d399' : '#fff', flexShrink: 0 }}>
-                {t.type === 'credit' ? '+' : '-'}${fmt(t.amount)}
-              </span>
-            </div>
-          ))
-        }
-      </div>
-    </div>
-  );
-}
-
-function SummaryCard({ label, value, color, prefix }) {
-  const f = n => n.toLocaleString('en-US', { minimumFractionDigits: 2 });
-  return (
-    <div className="glass" style={{ borderRadius: 16, padding: 'clamp(14px,2vw,18px) clamp(14px,2vw,20px)' }}>
-      <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 5, fontWeight: 500 }}>{label}</p>
-      <p style={{ fontSize: 'clamp(16px,2.5vw,22px)', fontWeight: 700, color, letterSpacing: '-0.3px' }}>{prefix}${f(value)}</p>
     </div>
   );
 }

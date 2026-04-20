@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Copy, Check, Lock, Unlock, Leaf, Plus, Delete } from 'lucide-react';
+import { Eye, EyeOff, Copy, Check, Lock, Unlock, Leaf, Plus } from 'lucide-react';
 import { card } from '../data/mockData';
 
 const fmt = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2 });
@@ -21,8 +21,8 @@ export default function Cards() {
     <div style={{ padding: 'clamp(20px,4vw,36px)', maxWidth: 1000, margin: '0 auto' }} className="fade-up">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 28, flexWrap: 'wrap', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 'clamp(18px,3vw,24px)', fontWeight: 700, color: '#fff', letterSpacing: '-0.4px', marginBottom: 3 }}>Cards</h1>
-          <p style={{ fontSize: 13, color: '#6b7280' }}>Manage your virtual cards</p>
+          <h1 style={{ fontSize: 'clamp(18px,3vw,24px)', fontWeight: 700, color: 'var(--text-1)', letterSpacing: '-0.4px', marginBottom: 3 }}>Cards</h1>
+          <p style={{ fontSize: 13, color: 'var(--text-2)' }}>Manage your virtual cards</p>
         </div>
         <button className="btn-primary" style={{ padding: '10px 18px', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}>
           <Plus size={14} /> New Card
@@ -91,7 +91,7 @@ export default function Cards() {
               <p style={{ textAlign: 'center', fontSize: 10, color: 'rgba(255,255,255,0.25)', marginTop: 8 }}>CVV</p>
             </div>
           </div>
-          <p style={{ fontSize: 11, color: '#374151', textAlign: 'center', marginBottom: 14 }}>Click card to flip</p>
+          <p style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'center', marginBottom: 14 }}>Click card to flip</p>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
             <CardAction icon={reveal ? <EyeOff size={15}/> : <Eye size={15}/>}       label={reveal ? 'Hide' : 'Reveal'}  onClick={() => setReveal(v=>!v)} />
@@ -105,21 +105,21 @@ export default function Cards() {
           {/* Limit */}
           <div className="glass" style={{ borderRadius: 18, padding: '20px 22px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#fff' }}>Monthly Limit</span>
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#6ee7b7' }}>{fmt(card.spent)} / {fmt(card.limit)}</span>
+              <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)' }}>Monthly Limit</span>
+              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--accent)' }}>{fmt(card.spent)} / {fmt(card.limit)}</span>
             </div>
-            <div style={{ height: 8, borderRadius: 99, background: 'rgba(255,255,255,0.07)', overflow: 'hidden' }}>
+            <div style={{ height: 8, borderRadius: 99, background: 'var(--step-inactive)', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${spentPct}%`, borderRadius: 99, background: spentPct > 80 ? 'linear-gradient(90deg,#ef4444,#f87171)' : 'linear-gradient(90deg,#059669,#10b981)', transition: 'width 0.8s cubic-bezier(.22,1,.36,1)' }} />
             </div>
-            <p style={{ fontSize: 11, color: '#6b7280', marginTop: 6 }}>{(100-spentPct).toFixed(0)}% remaining</p>
+            <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>{(100-spentPct).toFixed(0)}% remaining</p>
           </div>
 
           {/* Card info */}
           <div className="glass" style={{ borderRadius: 18, padding: '20px 22px' }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 14 }}>Card Details</p>
-            {[['Status','● Active','#34d399'],['Network',card.brand,'#6ee7b7'],['Type',card.type,'#9ca3af'],['Expires',card.expiry,'#9ca3af']].map(([k,v,c]) => (
-              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 9, marginBottom: 9, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                <span style={{ fontSize: 13, color: '#6b7280' }}>{k}</span>
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 14 }}>Card Details</p>
+            {[['Status','● Active','var(--accent)'],['Network',card.brand,'var(--accent-text)'],['Type',card.type,'var(--text-2)'],['Expires',card.expiry,'var(--text-2)']].map(([k,v,c]) => (
+              <div key={k} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 9, marginBottom: 9, borderBottom: '1px solid var(--divider)' }}>
+                <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{k}</span>
                 <span style={{ fontSize: 13, fontWeight: 600, color: c }}>{v}</span>
               </div>
             ))}
@@ -127,16 +127,16 @@ export default function Cards() {
 
           {/* Card transactions */}
           <div className="glass" style={{ borderRadius: 18, padding: '20px 22px', flex: 1 }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: '#fff', marginBottom: 14 }}>Card Transactions</p>
+            <p style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 14 }}>Card Transactions</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               {card.transactions.map(t => (
                 <div key={t.id} className="hover-row" style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 10 }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>{t.icon}</div>
+                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: 'var(--accent)' }}>{t.avatar}</div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontSize: 13, fontWeight: 500, color: '#e5e7eb' }}>{t.merchant}</p>
-                    <p style={{ fontSize: 11, color: '#4b5563' }}>{fmtD(t.date)}</p>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--input-text)' }}>{t.merchant}</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-3)' }}>{fmtD(t.date)}</p>
                   </div>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>-{fmt(t.amount)}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>-{fmt(t.amount)}</span>
                 </div>
               ))}
             </div>
@@ -151,9 +151,10 @@ function CardAction({ icon, label, onClick, active, danger }) {
   return (
     <button onClick={onClick} style={{
       padding: '11px', borderRadius: 12, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5,
-      background: danger ? 'rgba(239,68,68,0.08)' : active ? 'rgba(52,211,153,0.08)' : 'rgba(255,255,255,0.04)',
-      border: danger ? '1px solid rgba(239,68,68,0.15)' : '1px solid rgba(255,255,255,0.07)',
-      color: danger ? '#f87171' : active ? '#34d399' : '#9ca3af', cursor: 'pointer', transition: 'all 0.15s',
+      background: danger ? 'var(--chip-red-bg)' : active ? 'var(--chip-green-bg)' : 'var(--input-bg)',
+      border: danger ? '1px solid rgba(239,68,68,0.2)' : '1px solid var(--border)',
+      color: danger ? 'var(--chip-red-text)' : active ? 'var(--chip-green-text)' : 'var(--text-2)',
+      cursor: 'pointer', transition: 'all 0.15s',
     }}>
       {icon}
       <span style={{ fontSize: 11, fontWeight: 500 }}>{label}</span>

@@ -7,7 +7,7 @@ export function AppProvider({ children }) {
   const [balance, setBalance]   = useState(initUser.balance);
   const [transactions, setTransactions] = useState(init);
   const [hideBalance, setHideBalance]   = useState(false);
-  const [theme, setTheme]       = useState('dark'); // 'dark' | 'light'
+  const [theme, setTheme]       = useState('light'); // 'dark' | 'light'
 
   function send(contact, amount, note) {
     setBalance(b => b - amount);

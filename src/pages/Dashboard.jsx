@@ -158,7 +158,7 @@ function TxRow({ t }) {
     <tr className="hover-row" style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
       <td style={{ padding: '13px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>{t.icon}</div>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#34d399', flexShrink: 0 }}>{t.avatar}</div>
           <p style={{ fontSize: 13, fontWeight: 500, color: '#e5e7eb' }}>{t.name}</p>
         </div>
       </td>
@@ -176,7 +176,7 @@ function MobileRow({ t }) {
   const d = s => new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   return (
     <div className="hover-row" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 14px', borderRadius: 12, marginBottom: 2 }}>
-      <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>{t.icon}</div>
+      <div style={{ width: 38, height: 38, borderRadius: 11, background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#34d399', flexShrink: 0 }}>{t.avatar}</div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: 13, fontWeight: 500, color: '#e5e7eb', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</p>
         <p style={{ fontSize: 11, color: '#4b5563' }}>{d(t.date)} · {t.category}</p>

@@ -98,12 +98,7 @@ function Shell() {
             </button>
           );
         })}
-        {/* Mobile theme toggle */}
-        <button onClick={toggleTheme}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '4px 10px', minWidth: 50 }}>
-          {isDark ? <Sun size={20} strokeWidth={1.8} color={mobileInactiveColor} /> : <Moon size={20} strokeWidth={1.8} color={mobileInactiveColor} />}
-          <span style={{ fontSize: 10, fontWeight: 600, color: mobileInactiveColor }}>Theme</span>
-        </button>
+
       </nav>
     </div>
   );

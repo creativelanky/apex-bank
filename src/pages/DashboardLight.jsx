@@ -62,7 +62,6 @@ export default function DashboardLight({ onNav }) {
               boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                <span style={{ fontSize: 16 }}>{c.flag}</span>
                 <p style={{ fontSize: 12, color: '#94a3b8', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.code} Balance</p>
               </div>
               <p style={{ fontSize: 22, fontWeight: 700, color: '#1e293b', letterSpacing: '-0.3px' }}>
@@ -132,7 +131,7 @@ export default function DashboardLight({ onNav }) {
                       <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748b', whiteSpace: 'nowrap' }}>{fmtD(t.date)}</td>
                       <td style={{ padding: '12px 16px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{ width: 32, height: 32, borderRadius: 8, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{t.icon}</div>
+                          <div style={{ width: 32, height: 32, borderRadius: 8, background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#059669', flexShrink: 0 }}>{t.avatar}</div>
                           <span style={{ fontSize: 13, fontWeight: 500, color: '#1e293b', whiteSpace: 'nowrap' }}>{t.name}</span>
                         </div>
                       </td>
@@ -162,7 +161,7 @@ export default function DashboardLight({ onNav }) {
               <p style={{ padding: '40px', textAlign: 'center', color: '#94a3b8', fontSize: 14 }}>No transactions yet</p>
             ) : txns.slice(0, 8).map((t, i) => (
               <div key={t.id} className="hover-row" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '13px 16px', borderBottom: i < 7 ? '1px solid #f1f5f9' : 'none' }}>
-                <div style={{ width: 38, height: 38, borderRadius: 10, background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>{t.icon}</div>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: '#059669', flexShrink: 0 }}>{t.avatar}</div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontSize: 13, fontWeight: 500, color: '#1e293b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.name}</p>
                   <p style={{ fontSize: 11, color: '#94a3b8' }}>{fmtD(t.date)} · {t.category}</p>
