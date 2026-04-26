@@ -9,6 +9,7 @@ import Cards from './pages/Cards';
 import Send from './pages/Send';
 import Receive from './pages/Receive';
 import Settings from './pages/Settings';
+import Landing from './pages/Landing';
 import { LayoutDashboard, ArrowLeftRight, CreditCard, Send as SendIcon, Download, Sun, Moon } from 'lucide-react';
 import './index.css';
 
@@ -105,5 +106,7 @@ function Shell() {
 }
 
 export default function App() {
+  const [landed, setLanded] = useState(false);
+  if (!landed) return <Landing onEnter={() => setLanded(true)} />;
   return <AppProvider><Shell /></AppProvider>;
 }
