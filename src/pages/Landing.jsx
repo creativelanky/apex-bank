@@ -3,17 +3,17 @@ import { Leaf, ArrowRight, Send, Download, CreditCard, RefreshCw, PiggyBank, Fil
 
 const SLIDES = [
   {
-    img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80',
+    img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1600&q=80',
     heading: 'Smart way to keep your\nmoney safe and secure',
     sub: 'Global transfers, multi-currency accounts, and competitive savings — all in one place.',
   },
   {
-    img: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=1600&q=80',
+    img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1600&q=80',
     heading: 'Grow your wealth with\nhigh-yield fixed deposits',
     sub: 'Earn up to 45% annual returns with our flexible fixed deposit plans.',
   },
   {
-    img: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80',
+    img: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1600&q=80',
     heading: 'Fast and flexible loans\ntailored for you',
     sub: 'Personal, business, and mortgage loans with competitive rates from 5% p.a.',
   },
