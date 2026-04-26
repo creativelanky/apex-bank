@@ -1,4 +1,23 @@
-import { Leaf, ArrowRight, Send, Download, CreditCard, RefreshCw, PiggyBank, FileText, Shield, Globe, Clock, Users, TrendingUp, ChevronRight, Phone, Mail, MapPin, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Leaf, ArrowRight, Send, Download, CreditCard, RefreshCw, PiggyBank, FileText, Shield, Globe, Clock, Users, TrendingUp, ChevronRight, Phone, Mail, MapPin, Check, ChevronLeft } from 'lucide-react';
+
+const SLIDES = [
+  {
+    img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=80',
+    heading: 'Smart way to keep your\nmoney safe and secure',
+    sub: 'Global transfers, multi-currency accounts, and competitive savings — all in one place.',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1560472355-536de3962603?w=1600&q=80',
+    heading: 'Grow your wealth with\nhigh-yield fixed deposits',
+    sub: 'Earn up to 45% annual returns with our flexible fixed deposit plans.',
+  },
+  {
+    img: 'https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=1600&q=80',
+    heading: 'Fast and flexible loans\ntailored for you',
+    sub: 'Personal, business, and mortgage loans with competitive rates from 5% p.a.',
+  },
+];
 
 const SERVICES = [
   { icon: Send,        title: 'Money Transfer',    desc: 'Send money globally with low fees and lightning-fast delivery.' },
@@ -38,6 +57,16 @@ const WHY = [
 const NAV_LINKS = ['Home', 'About', 'Services', 'Plans', 'FAQ', 'Contact'];
 
 export default function Landing({ onEnter }) {
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => setSlide(s => (s + 1) % SLIDES.length), 5000);
+    return () => clearInterval(t);
+  }, []);
+
+  const prev = () => setSlide(s => (s - 1 + SLIDES.length) % SLIDES.length);
+  const next = () => setSlide(s => (s + 1) % SLIDES.length);
+
   return (
     <div style={{ fontFamily: "'Inter', system-ui, sans-serif", color: '#1e293b', overflowX: 'hidden' }}>
 
@@ -76,121 +105,70 @@ export default function Landing({ onEnter }) {
         </div>
       </nav>
 
-      {/* ── HERO ── */}
-      <section id="home" style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center',
-        background: 'linear-gradient(135deg, #0f172a 0%, #0c1a2e 50%, #042f1e 100%)',
-        position: 'relative', overflow: 'hidden', paddingTop: 64,
-      }}>
-        {/* Decorative circles */}
-        <div style={{ position: 'absolute', top: -120, right: -120, width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: -80, left: -80, width: 400, height: 400, borderRadius: '50%', background: 'radial-gradient(circle, rgba(5,150,105,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+      {/* ── HERO SLIDESHOW ── */}
+      <section id="home" style={{ position: 'relative', height: '88vh', minHeight: 520, overflow: 'hidden', paddingTop: 64 }}>
+        {/* Slides */}
+        {SLIDES.map((s, i) => (
+          <div key={i} style={{
+            position: 'absolute', inset: 0,
+            opacity: i === slide ? 1 : 0,
+            transition: 'opacity 1s ease',
+            pointerEvents: i === slide ? 'auto' : 'none',
+          }}>
+            <img src={s.img} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.1) 100%)' }} />
+          </div>
+        ))}
 
-        <div style={{ maxWidth: 1200, margin: '0 auto', padding: 'clamp(40px,8vw,100px) clamp(20px,5vw,64px)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%,480px),1fr))', gap: 60, alignItems: 'center', width: '100%' }}>
-          {/* Left */}
-          <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '6px 14px', borderRadius: 99, background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', marginBottom: 28 }}>
-              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10b981' }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: '#6ee7b7', letterSpacing: '0.04em' }}>Trusted by 50,000+ customers worldwide</span>
-            </div>
-
-            <h1 style={{ fontSize: 'clamp(36px,5vw,62px)', fontWeight: 900, color: '#fff', lineHeight: 1.1, letterSpacing: '-1.5px', marginBottom: 22 }}>
-              Smart way to keep<br />your money{' '}
-              <span style={{ background: 'linear-gradient(90deg,#10b981,#34d399)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                safe &amp; secure
-              </span>
-            </h1>
-
-            <p style={{ fontSize: 'clamp(15px,1.8vw,18px)', color: '#94a3b8', lineHeight: 1.7, marginBottom: 36, maxWidth: 480 }}>
-              Apex Bank gives you instant access to global money transfers, multi-currency accounts, competitive savings rates, and flexible loan products — all in one place.
-            </p>
+        {/* Text content */}
+        <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'flex', alignItems: 'center', padding: '0 clamp(24px,6vw,96px)' }}>
+          <div style={{ maxWidth: 620 }}>
+            {/* Slide heading */}
+            {SLIDES.map((s, i) => (
+              <div key={i} style={{ position: i === slide ? 'relative' : 'absolute', opacity: i === slide ? 1 : 0, transition: 'opacity 0.8s ease', pointerEvents: i === slide ? 'auto' : 'none' }}>
+                <h1 style={{ fontSize: 'clamp(30px,4.5vw,56px)', fontWeight: 800, color: '#fff', lineHeight: 1.18, letterSpacing: '-0.5px', marginBottom: 18, whiteSpace: 'pre-line', textShadow: '0 2px 12px rgba(0,0,0,0.4)' }}>
+                  {s.heading}
+                </h1>
+                <p style={{ fontSize: 'clamp(14px,1.6vw,18px)', color: 'rgba(255,255,255,0.82)', lineHeight: 1.7, marginBottom: 36, maxWidth: 500, textShadow: '0 1px 6px rgba(0,0,0,0.4)' }}>
+                  {s.sub}
+                </p>
+              </div>
+            ))}
 
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-              <button onClick={onEnter} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 28px', borderRadius: 10, fontSize: 15, fontWeight: 700, color: '#fff', background: 'linear-gradient(135deg,#059669,#10b981)', border: 'none', cursor: 'pointer', boxShadow: '0 8px 32px rgba(16,185,129,0.3)' }}>
-                Open Free Account <ArrowRight size={16} />
+              <button onClick={onEnter} style={{ padding: '13px 28px', borderRadius: 4, fontSize: 15, fontWeight: 700, color: '#fff', background: '#059669', border: 'none', cursor: 'pointer', letterSpacing: '0.02em' }}>
+                Get Started
               </button>
-              <button style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 24px', borderRadius: 10, fontSize: 15, fontWeight: 600, color: '#e2e8f0', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>
+              <button style={{ padding: '13px 24px', borderRadius: 4, fontSize: 15, fontWeight: 600, color: '#fff', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.35)', cursor: 'pointer', backdropFilter: 'blur(8px)' }}>
                 Learn More
               </button>
             </div>
-
-            {/* Trust badges */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginTop: 40, flexWrap: 'wrap' }}>
-              {['FDIC Insured', 'SSL Secured', '256-bit Encryption'].map(b => (
-                <div key={b} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <Check size={13} color="#10b981" strokeWidth={3} />
-                  <span style={{ fontSize: 12.5, color: '#64748b', fontWeight: 500 }}>{b}</span>
-                </div>
-              ))}
-            </div>
           </div>
+        </div>
 
-          {/* Right — Dashboard mockup */}
-          <div style={{ position: 'relative' }}>
-            <div style={{
-              borderRadius: 20, overflow: 'hidden',
-              background: 'linear-gradient(135deg,#0f172a,#1e293b)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)',
-              padding: 24,
-            }}>
-              {/* Mock header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-                <div>
-                  <p style={{ fontSize: 11, color: '#475569', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>Account Balance</p>
-                  <p style={{ fontSize: 32, fontWeight: 800, color: '#fff', letterSpacing: '-1px' }}>$48,294.52</p>
-                </div>
-                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#1e40af,#3b82f6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: '#fff' }}>AR</div>
-              </div>
+        {/* Prev / Next arrows */}
+        {[{ fn: prev, side: 'left', icon: <ChevronLeft size={26} /> }, { fn: next, side: 'right', icon: <ChevronRight size={26} /> }].map(({ fn, side, icon }) => (
+          <button key={side} onClick={fn} style={{
+            position: 'absolute', top: '50%', [side]: 20, transform: 'translateY(-50%)', zIndex: 3,
+            width: 48, height: 48, borderRadius: '50%',
+            background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.2)',
+            color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', backdropFilter: 'blur(6px)', transition: 'background 0.2s',
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = 'rgba(5,150,105,0.7)'}
+            onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.35)'}
+          >{icon}</button>
+        ))}
 
-              {/* Mock card */}
-              <div style={{ borderRadius: 14, background: 'linear-gradient(135deg,#022c22,#064e3b,#065f46)', padding: '18px 20px', marginBottom: 20, position: 'relative', overflow: 'hidden' }}>
-                <div style={{ position: 'absolute', top: -20, right: -20, width: 100, height: 100, borderRadius: '50%', background: 'rgba(52,211,153,0.08)' }} />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <Leaf size={11} color="#34d399" fill="#34d399" />
-                    <span style={{ fontSize: 11, fontWeight: 800, color: '#34d399', letterSpacing: '0.08em' }}>APEX</span>
-                  </div>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.1em' }}>VISA</span>
-                </div>
-                <p style={{ fontFamily: 'monospace', fontSize: 14, color: 'rgba(255,255,255,0.8)', letterSpacing: '0.18em', marginBottom: 14 }}>4521 •••• •••• 6647</p>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <div>
-                    <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em', marginBottom: 2 }}>CARD HOLDER</p>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>ALEX RIVERA</p>
-                  </div>
-                  <div>
-                    <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.08em', marginBottom: 2 }}>EXPIRES</p>
-                    <p style={{ fontSize: 11, fontWeight: 600, color: 'rgba(255,255,255,0.8)', fontFamily: 'monospace' }}>09/28</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Mock transactions */}
-              {[
-                { name: 'Stripe Inc.', amt: '+$8,500', color: '#10b981', avatar: 'SI' },
-                { name: 'Figma Pro',   amt: '-$45.00', color: '#fff',    avatar: 'FG' },
-                { name: 'AWS',         amt: '-$184.37',color: '#fff',    avatar: 'AW' },
-              ].map((tx, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 0', borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none' }}>
-                  <div style={{ width: 32, height: 32, borderRadius: 9, background: 'rgba(16,185,129,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 700, color: '#34d399' }}>{tx.avatar}</div>
-                  <p style={{ flex: 1, fontSize: 13, fontWeight: 500, color: '#e2e8f0' }}>{tx.name}</p>
-                  <p style={{ fontSize: 13, fontWeight: 700, color: tx.color }}>{tx.amt}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Floating badge */}
-            <div style={{ position: 'absolute', bottom: -20, left: -20, background: '#fff', borderRadius: 14, padding: '12px 18px', boxShadow: '0 20px 60px rgba(0,0,0,0.25)', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <TrendingUp size={16} color="#059669" />
-              </div>
-              <div>
-                <p style={{ fontSize: 11, color: '#64748b', fontWeight: 500 }}>Monthly savings</p>
-                <p style={{ fontSize: 15, fontWeight: 800, color: '#059669' }}>+12.4%</p>
-              </div>
-            </div>
-          </div>
+        {/* Dot indicators */}
+        <div style={{ position: 'absolute', bottom: 24, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8, zIndex: 3 }}>
+          {SLIDES.map((_, i) => (
+            <button key={i} onClick={() => setSlide(i)} style={{
+              width: i === slide ? 28 : 8, height: 8, borderRadius: 4,
+              background: i === slide ? '#10b981' : 'rgba(255,255,255,0.4)',
+              border: 'none', cursor: 'pointer', transition: 'all 0.35s ease', padding: 0,
+            }} />
+          ))}
         </div>
       </section>
 
