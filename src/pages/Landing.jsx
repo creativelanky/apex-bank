@@ -56,7 +56,7 @@ const WHY = [
 
 const NAV_LINKS = ['Home', 'About', 'Services', 'Plans', 'FAQ', 'Contact'];
 
-export default function Landing({ onEnter }) {
+export default function Landing({ onEnter, onAdmin }) {
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
@@ -96,6 +96,9 @@ export default function Landing({ onEnter }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button onClick={onAdmin} style={{ padding: '8px 14px', borderRadius: 8, fontSize: 12, fontWeight: 600, color: '#64748b', background: 'transparent', border: '1px solid rgba(255,255,255,0.07)', cursor: 'pointer' }}>
+            Admin
+          </button>
           <button onClick={onEnter} style={{ padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600, color: '#94a3b8', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer' }}>
             Sign In
           </button>

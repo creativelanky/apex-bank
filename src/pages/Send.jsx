@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   Building2, Zap, ArrowRight, Check, Clock, ChevronDown,
-  RotateCcw, Delete, Info, ShieldCheck, AlertCircle, Smartphone, RefreshCw
+  RotateCcw, Delete, Info, ShieldCheck, AlertCircle, Smartphone, RefreshCw, Lock
 } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 
@@ -38,7 +38,7 @@ const TRANSFER_TYPES = [
 const STEPS = ['Type', 'Bank Details', 'Review', 'OTP', 'Done'];
 
 export default function Send({ onNav }) {
-  const { send, balance } = useApp();
+  const { send, balance, sendRestricted, sendRestrictMsg } = useApp();
   const [step, setStep]           = useState(0);
   const [type, setType]           = useState(null);
   const [bankName, setBankName]   = useState('');
@@ -147,6 +147,18 @@ export default function Send({ onNav }) {
           </button>
         </div>
       </div>
+    </div>
+  );
+
+  if (sendRestricted) return (
+    <div style={{ minHeight: '100%', background: 'var(--page-bg)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 }} className="fade-up">
+      <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'rgba(239,68,68,0.1)', border: '2px solid rgba(239,68,68,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 20 }}>
+        <AlertCircle size={28} color="#ef4444" />
+      </div>
+      <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-1)', marginBottom: 10 }}>Transfers Unavailable</p>
+      <p style={{ fontSize: 14, color: 'var(--text-2)', textAlign: 'center', maxWidth: 360, lineHeight: 1.7 }}>
+        {sendRestrictMsg || 'Outgoing transfers are currently disabled on your account. Please contact support.'}
+      </p>
     </div>
   );
 
