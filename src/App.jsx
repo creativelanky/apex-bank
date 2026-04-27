@@ -145,9 +145,13 @@ function Shell() {
 }
 
 export default function App() {
-  const [view, setView] = useState('landing'); // 'landing' | 'app' | 'admin'
+  const [view, setView] = useState('landing');
 
-  if (view === 'landing') return <Landing onEnter={() => setView('app')} onAdmin={() => setView('admin')} />;
-  if (view === 'admin')   return <AppProvider><Admin onBack={() => setView('landing')} /></AppProvider>;
-  return <AppProvider><Shell /></AppProvider>;
+  return (
+    <AppProvider>
+      {view === 'landing' && <Landing onEnter={() => setView('app')} onAdmin={() => setView('admin')} />}
+      {view === 'admin'   && <Admin onBack={() => setView('landing')} />}
+      {view === 'app'     && <Shell />}
+    </AppProvider>
+  );
 }
